@@ -3,7 +3,7 @@
 This repository demonstrates simple book rental app built with Python/Django and Dockerized for deployment.
 
 **Steps to run application in Docker container**
-1. Clone repo: git clone "https://github.com/exceptionalvic/bookrentalo.git"
+1. Clone repo: git clone "https://github.com/exceptionalvic/bookrental.git"
 2. CD into the cloned directory. We are using existing dbsqlite3 in the project for test purposes.
 3. Create a virtual environment and activate it: `python -m venv env`
 4. Admin login details and SECRET_KEY is provided in env.txt file. Test user login also provided.
