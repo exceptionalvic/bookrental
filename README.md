@@ -19,7 +19,7 @@ Logged in Admin can also access Django Main Admin Area at http://localhost/auth-
 
 
 **Steps to run application directly without Docker**
-1. Clone repo: git clone "https://github.com/exceptionalvic/bookrentalo.git"
+1. Clone repo: git clone "https://github.com/exceptionalvic/bookrental.git"
 2. CD into the cloned directory
 3. Create a virtual environment and activate it: `python -m venv env`
 4. Install required packages: `pip install -r requirements.txt`
