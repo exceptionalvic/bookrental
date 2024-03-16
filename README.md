@@ -5,7 +5,7 @@ Code follows PEP8 and PEP20 standards.
 
 **Steps to run application in Docker container**
 1. Clone repo: git clone "https://github.com/exceptionalvic/bookrentalo.git"
-2. CD into the cloned directory
+2. CD into the cloned directory. We are using existing dbsqlite3 in the project for test purposes.
 3. Create a virtual environment and activate it: `python -m venv env`
 4. Admin login details and SECRET_KEY is provided in env.txt file. Test user login also provided.
 5. Create a .env file at the root of the project and add SECRET_KEY variable copied from env.txt above. This is sample best practice to hide sensitive details from public. Web container will look for this variable in the .env file as specified in the docker compose file.

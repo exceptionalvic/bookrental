@@ -2,7 +2,7 @@ from apps.core.models import Book, User
 
 
 def create_book(book_details):
-    "Create a new book."
+    "Create a new book or get existing book with given details."
     book = Book.objects.get_or_create(
             title=book_details["title"],
             author=book_details["author"],

@@ -1,12 +1,8 @@
-from django.shortcuts import (
-    render,
-    redirect,
-    get_object_or_404
-)
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from apps.core.forms import RentBookForm
-from apps.core.models import Rental, Book
+from apps.core.models import Rental
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 import datetime
@@ -125,7 +121,8 @@ def user_rentals_detail(request, user_id):
 def initiate_book_rental_request(request):
     # try to delete initial book detail session
     try:
-        del request.session['book_details']
+        del request.session["book_details"]
+        del request.session["search_query"]
     except:
         pass
     if request.method == "POST":
@@ -134,10 +131,11 @@ def initiate_book_rental_request(request):
         # Call fetch_book_details function to get book details
         try:
             book_details = fetch_book_details(title)
-            # set response data in session for further use
-            request.session['book_details'] = book_details
+            # set response data and title in session for further use
+            request.session["book_details"] = book_details
+            request.session["search_query"] = title
             # redirect to next rental stage to take user details
-            return redirect('core:rent-book')
+            return redirect("core:rent-book")
         except (ConnectionError, ConnectTimeout):
             messages.error(
                 request,
@@ -152,40 +150,44 @@ def initiate_book_rental_request(request):
                 f"Error creating rental. Please try again",
             )
             return redirect("core:rent-book")
-    return render(request, 'core/initiate_rental.html')
-    
+    return render(request, "core/initiate_rental.html")
 
 
 @staff_member_required(login_url="/auth/login/")
 @transaction.atomic
 def handle_rent_book_request(request):
     """Handle rent book request."""
-    # get book details from session
-    book_details = request.session.get('book_details')
+    # get book details and title search query from session
+    book_details = request.session.get("book_details", None)
+    search_query = request.session.get("search_query", None)
+    
+    # handle when view is called without initiating rental
+    # to avoid nonetype and key errors
+    if not book_details and not search_query:
+        return redirect('core:initiate-book-rental')
     book_rental_form = RentBookForm()
-        
+
     if request.method == "POST":
         new_rental = RentBookForm(request.POST)
         if new_rental.is_valid():
             # get the fields from the post request
-            email = new_rental.cleaned_data['email']
-            first_name = new_rental.cleaned_data['first_name']
-            last_name = new_rental.cleaned_data['last_name']
+            email = new_rental.cleaned_data["email"]
+            first_name = new_rental.cleaned_data["first_name"]
+            last_name = new_rental.cleaned_data["last_name"]
 
-        
         if not book_details or "number_of_pages" == 0 in book_details:
             # if book detail is not fetched and number_of_pages is 0, throw error
             # this means request was not successful
             messages.error(
                 request,
-                f"Book with title: {book_details['title']} does not exist or incomplete data.",
+                f"{book_details['title']} does not exist or incomplete data.",
             )
             return redirect("core:rent-book")
         # If book doesn't exist, create a new Book object
         book = create_book(book_details)
 
         # Check if user with given email exists or create new user
-        user, user_created = create_or_get_user(email, first_name, last_name)
+        user = create_or_get_user(email, first_name, last_name)
 
         # Create a Rental object and set due date, 30 days from rent date
         end_date = datetime.datetime.today() + datetime.timedelta(days=30)
@@ -196,22 +198,20 @@ def handle_rent_book_request(request):
         )
         try:
             # try deleting the book_details in session
-            del request.session['book_details']
+            del request.session["book_details"]
+            del request.session["search_query"]
         except:
             pass
         return redirect("core:all-rental-users")
-    
-    context = {
-        'book_title': book_details['title'],
-        'form': book_rental_form
-    }
+
+    context = {"book_title": search_query, "form": book_rental_form}
 
     return render(request, "core/rent_book.html", context)
 
 
 @staff_member_required(login_url="/auth/login/")
 def filter_rentals(request):
-    """Filter admin action."""
+    """Filter rentals."""
     selected_filter = request.GET.get("filter")
     if selected_filter == "due_rentals":
         # filter out rentals with due date exceeded and no return date

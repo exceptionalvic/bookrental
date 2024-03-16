@@ -9,7 +9,6 @@ urlpatterns = [
     path('auth-admin/', admin.site.urls),
     path('', include(('apps.users.urls', 'users'))),
     path('', include(('apps.core.urls', 'core'))),
-    # path('', include('pages.urls', namespace='pages')),
 ]
 
 if settings.DEBUG:

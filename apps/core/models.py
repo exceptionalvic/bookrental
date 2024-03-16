@@ -50,7 +50,7 @@ class Rental(models.Model):
             fee = self.book.number_of_pages / Decimal(100)
             # Calculate the amount due considering the fee and rental period
             amount_due = fee * Decimal(months_rented)
-            return amount_due
+            return round(amount_due, 2) # round up to 2 decimals
         
     def extend_rental(self, admin_user, extension_duration_in_months):
         """Extend book rental."""

@@ -56,9 +56,10 @@ def admin_sign_up(request):
                 # print(is_valid_password)
                 if is_valid_password is None:
                     user = User.objects.create_user(
-                        email=email, password=password,
+                        email=email,
+                        password=password,
                         is_staff=True,
-                        is_superuser=True
+                        is_superuser=True,
                     )
                     user.save()
                     login(
