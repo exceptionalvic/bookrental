@@ -1,7 +1,6 @@
 # Book Rental App
 
 This repository demonstrates simple book rental app built with Python/Django and Dockerized for deployment.
-Code follows PEP8 and PEP20 standards.
 
 **Steps to run application in Docker container**
 1. Clone repo: git clone "https://github.com/exceptionalvic/bookrentalo.git"
