@@ -1,4 +1,4 @@
-# WhatsApp API Server
+# Book Rental App
 
 This repository demonstrates simple book rental app built with Python/Django and Dockerized for deployment.
 Code follows PEP8 and PEP20 standards.
