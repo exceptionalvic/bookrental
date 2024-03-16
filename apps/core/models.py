@@ -6,6 +6,7 @@ from apps.mixins import TimeStampMixin
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+import math
 
 User = get_user_model()
 
@@ -22,7 +23,7 @@ class Book(TimeStampMixin):
 class Rental(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_rentals')
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    start_date = models.DateField(auto_now_add=True)
+    start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     book_return_date = models.DateField(null=True, blank=True)
     is_book_returned = models.BooleanField(default=False)
@@ -38,18 +39,16 @@ class Rental(models.Model):
     def calculate_rental_fee(self):
         """Calculate rental fee."""
         days_rented = (datetime.datetime.now().date() - self.start_date).days
-        extension = self.extension_duration_in_months
-        if days_rented <= 30 and self.extension_duration_in_months == 0:
+        if days_rented <= 30:
             return Decimal(0)
         else:
             # Calculate the number of months beyond the initial free month
-            months_rented = (days_rented - 30) / 30
-            # Account for return date extension
-            months_rented += extension
+            # round up to nearest whole number
+            months_rented = math.ceil((days_rented - 30) / 30)
             # Calculate the fee based on number of pages
-            fee = self.book.number_of_pages / Decimal(100)
+            fee = self.book.number_of_pages / 100 * 3
             # Calculate the amount due considering the fee and rental period
-            amount_due = fee * Decimal(months_rented)
+            amount_due = Decimal(fee) * Decimal(months_rented)
             return round(amount_due, 2) # round up to 2 decimals
         
     def extend_rental(self, admin_user, extension_duration_in_months):
@@ -69,7 +68,7 @@ class Rental(models.Model):
         
     def close_rental(self):
         """Close book rental and mark as returned."""
-        self.book_return_date = datetime.datetime.today()
+        self.book_return_date = datetime.datetime.now().today()
         self.is_book_returned = True
         self.save()
     
@@ -100,6 +99,7 @@ class AdminLogs(TimeStampMixin):
 def update_end_date(sender, instance, created, *args, **kwargs):
     # ensure signal fires at initial creation only
     if created:
-        # update end date
+        # update start and end date
+        instance.start_date = datetime.datetime.now().date()
         instance.end_date = instance.start_date + datetime.timedelta(days=30)
         instance.save()

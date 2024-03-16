@@ -247,6 +247,19 @@ def extend_rental(request, rental_id):
     if rental and request.method == "POST":
         # set duration
         duration = request.POST.get("duration_in_months")
+        # check if end_date
+        today = datetime.datetime.now().date()
+        if not today >= rental.end_date:
+            messages.error(
+            request, f"Book rental has not exceeded due date"
+            )
+            return redirect("core:user-rental-detail", user_id=rental.user.id)
+        # check if extension end date is less than today
+        if rental.extention_end_date and not today >= rental.extention_end_date:
+            messages.error(
+            request, f"Book rental has not exceeded due date"
+            )
+            return redirect("core:user-rental-detail", user_id=rental.user.id)
         # call extend rental function to extend rental
         rental.extend_rental(request.user, int(duration))
         fee = rental.calculate_rental_fee

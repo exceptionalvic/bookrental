@@ -25,22 +25,26 @@
             <th scope="col">Author</th>
             <th scope="col">Pages</th>
             <th scope="col">Fees ($)</th>
+            <th scope="col">Start Date</th>
             <th scope="col">Date Due</th>
             <th scope="col">Returned?</th>
-            <th scope="col">Extend?</th>
+            <th scope="col">Was Rental Extended?</th>
+            <th scope="col">Extend</th>
             <th scope="col">Update</th>
           </tr>
         </thead>
         <tbody>
           {% for rental in rentals %}
           <tr>
-            <td style="max-width: 15rem;">{{ rental.user.get_full_name }}</td>
-            <td>{{ rental.book.title }}</td>
+            <td style="max-width: 13rem;">{{ rental.user.get_full_name }}</td>
+            <td style="max-width: 13rem;">{{ rental.book.title }}</td>
             <td>{{ rental.book.author }}</td>
             <td>{{ rental.book.number_of_pages }}</td>
             <td>{{ rental.calculate_rental_fee }}</td>
+            <td>{{ rental.start_date }}</td>
             <td>{% if not rental.extention_end_date %} {{ rental.end_date }} {% else %} {{rental.extention_end_date}} {% endif %}</td>
             <td>{% if not rental.is_book_returned %} <span class="badge bg-danger">not returned</span> {% else %} <span class="badge bg-success">returned</span> {% endif %}</td>
+            <td>{{ rental.is_extended }}</td>
             <td>{% if not rental.is_book_returned %}<a href="{% url 'core:extend-rental' rental.id %}" class="btn btn-secondary btn-sm">Extend</a>{% else %} no action {% endif %}</td>
             <td>{% if not rental.is_book_returned %}<a href="{% url 'core:close-rental' rental.id %}" class="btn btn-success btn-sm">Mark As Returned</a>{% else %} no action {% endif %}</td>
   
