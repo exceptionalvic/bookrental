@@ -11,7 +11,7 @@ This repository demonstrates simple book rental app built with Python/Django and
 6. Ensure that Docker CE and Docker Compose version 2 is installed on your machine
 7. To build the 2 images web and nginx and run their containers, if Docker Compose version 1 is installed on your local machine, run `docker-compose -f docker-compose.yml build`, for Docker compose version 2, run `docker compose -f docker-compose.yml build` to build the images. Using Docker compose makes configuration and seperation of concerns easier since it utilizes the principle behind Infrastructure as a code. It comes also handy when running CI/CD operations with multiple customizations. Effectively ensuring local dev setup is not much different from production makes maintainability and lifecycle management easier.
 8. To run application, `docker-compose -f docker-compose.yml up -d` for Docker Compose version 1, `docker compose -f docker-compose.yml up -d` for Version 2.
-9. This will install requirements and instruct gunicorn to run the web application using Nginx as reverser proxy orchestrated by Docker Compose.
+9. This will install requirements and instruct gunicorn to run the web application using Nginx as reverse proxy orchestrated by Docker Compose.
 10. Access the running application to login at http://localhost/auth/login/ either as user or Admin. You will be redirected to appropriate custom dashboard. 
 Logged in Admin can also access Django Main Admin Area at http://localhost/auth-admin/
 
