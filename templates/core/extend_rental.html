@@ -1,0 +1,33 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+
+{% block content %}
+<title>Extend Rental - BookRentalo.com</title>
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      <h1 class="h2">Extend Rental</span></h1>
+    </div>
+    <div class="container">
+        <!-- book detail -->
+        <div class="card mb-2 mt-2">
+            <div class="card-body">
+                <p class="text-muted">Book Title: <strong>{{ rental.book.title }}</strong></p>
+                <p class="text-muted">Return Due Date: <strong>{{ rental.end_date }}</strong></p>
+                <p class="text-muted">Rented By: <strong>{{ rental.user.get_full_name }}</strong></p>
+            </div>
+        </div>
+        <form method="POST" action="." class="mx-auto my-auto">
+            {% csrf_token %}
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Extension Duration in Months</label>
+            <input type="number" class="form-control" required name="duration_in_months" id="exampleFormControlInput1" placeholder="input number of months">
+          </div>
+          
+          <input type="submit" value="Confirm" class="btn btn-primary">
+        </form>
+    </div>
+  </main>
+
+{% endblock %}

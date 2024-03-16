@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content %}
+<title> Sign In - BookRentalo.com</title>
+
+
+    <main class="form-signin bg-light">
+        <form method="POST" action=".">
+            {% csrf_token %}
+            <h1 class="h3 mb-3 fw-normal">Please sign in.</h1>
+
+            <div class="form-floating">
+            <input type="email" class="form-control" id="floatingPassword" placeholder="Email" name="email">
+            <label for="floatingEmail">Email</label>
+            </div>
+
+            <div class="form-floating">
+            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+            <label for="floatingPassword">Password</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign In</button>
+            <p class="mt-1 mb-3 text-muted">Don't have an account? <a href="{% url 'users:signup' %}" class="text-decoration-none">Sign Up</a></p>
+        </form>    
+    </main>
+
+
+
+
+{% endblock content %}

@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  web:
+    environment:
+      - DJANGO_MANAGEPY_MIGRATE=on
+      - DJANGO_MANAGEPY_COLLECTSTATIC=on
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web
+    command: gunicorn bookrental_project.wsgi:application --timeout 60 --bind 0.0.0.0:8000
+    
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+      - media_volume:/usr/src/app/media
+    
+    ports:
+      - 8000:8000
+    env_file: .env
+    networks:
+      - server
+    mem_limit: 2.8g
+
+  nginx:
+    environment:
+      - DJANGO_MANAGEPY_MIGRATE=off
+      - DJANGO_MANAGEPY_COLLECTSTATIC=off
+    build:
+      context: ./deployment/nginx
+    container_name: nginx
+    restart: always
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+      - media_volume:/usr/src/app/media
+    ports:
+      - "80:80"
+    networks:
+      - server
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
+  media_volume:
+
+networks:
+  server:
+    driver: bridge

@@ -1,0 +1,111 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+
+{% block content %}
+<title>My Dashbord - BookRentalo.com</title>
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      <h1 class="h2">Welcome, <span class="text-muted">{{ request.user.get_full_name }}</span></h1>
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="col me-2">
+            <select class="form-select" aria-label="Default select example" name="filter" id="filter-select">
+                <option selected>Filter Book Rentals</option>
+                <option value="due_rentals">All Due Rentals</option>
+                <option value="extended_rentals">All Extended Rentals</option>
+                <option value="reset_filter">Reset</option>
+            </select>
+        </div>
+        
+        <div class="btn-group me-2">
+          <a href="/admin/initiate-rental/" class="btn btn-primary mb-1">Rent Out A Book</a>
+        </div>
+      </div>
+    </div>
+    <!-- data cards -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card shadow-sm mb-2">
+          <div class="card-body text-center">
+            <h4> Total Books Rented </h4>
+            <span class="text-primary h5 text-center">
+              {{ total_books_rented }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card shadow-sm mb-2">
+          <div class="card-body text-center">
+            <h4> Total Revenue </h4>
+            <span class="text-primary h5 text-center">
+              ${{ total_fees_paid }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card shadow-sm mb-2">
+          <div class="card-body text-center">
+            <h4> Total Users </h4>
+            <span class="text-primary h5 text-center">
+              {{ total_users }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> -->
+
+    <h4 class="text-muted mt-3">Simple Book Rentals Overview</h4>
+    <div class="table-responsive" id="filtered-results">
+        <div id="loading-spinner" style="display: none;">
+            <!-- Add your loading spinner here -->
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Pages</th>
+            <th scope="col">User</th>
+            <th scope="col">Fees ($)</th>
+            <th scope="col">Date Rented</th>
+
+            <th scope="col">Date Due</th>
+            <th scope="col">Extension Date</th>
+            <th scope="col">Date Returned</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rent in rentals %}
+          <tr>
+            <td style="max-width: 15rem;">{{ rent.book.title }}</td>
+            <td>{{ rent.book.number_of_pages }}</td>
+            <td>{{ rent.user.get_full_name }}</td>
+            <td class="mx-auto">{{ rent.calculate_rental_fee }}</td>
+            <td>{{ rent.start_date }}</td>
+            
+            
+            <td>{{ rent.end_date }}</td>
+            <td>{% if rent.extention_end_date %} {{ rent.extention_end_date }} {% else %} - {% endif %}</td>
+            <td>{% if not rent.book_return_date %} <span class="text-danger">Not Returned</span> {% else %} {{ rent.book_return_date }} {% endif %}</td>
+          </tr>
+          {% empty %}
+          <tr>
+          No rents yet.
+          </tr>
+          {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+{% endblock %}

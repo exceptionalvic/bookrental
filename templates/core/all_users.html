@@ -1,0 +1,49 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+
+{% block content %}
+<title>All Users - BookRentalo.com</title>
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      <h1 class="h2">All Users</span></h1>
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+          <a href="/admin/initiate-rental/" class="btn btn-primary mb-1">Rent Out A Book</a>
+        </div>
+      </div>
+    </div>
+    
+    <h4 class="text-muted mt-3">Book Rentals By Users</h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Full Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Total Books</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rental_user in rental_users %}
+          <tr>
+            <td style="max-width: 15rem;">{{ rental_user.get_full_name }}</td>
+            <td>{{ rental_user.email }}</td>
+            <td>{{ rental_user.get_total_rented_books }}</td>
+            <td><a href="{% url 'core:user-rental-detail' rental_user.id %}" class="btn btn-secondary btn-sm">View user rentals</a></td>
+  
+        </tr>
+          {% empty %}
+          <tr>
+          No rents yet.
+          </tr>
+          {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+{% endblock %}
