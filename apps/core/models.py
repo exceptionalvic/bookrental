@@ -46,7 +46,7 @@ class Rental(models.Model):
             # round up to nearest whole number
             months_rented = math.ceil((days_rented - 30) / 30)
             # Calculate the fee based on number of pages
-            fee = self.book.number_of_pages / 100 * 3
+            fee = self.book.number_of_pages / 100
             # Calculate the amount due considering the fee and rental period
             amount_due = Decimal(fee) * Decimal(months_rented)
             return round(amount_due, 2) # round up to 2 decimals
